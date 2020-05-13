@@ -4,11 +4,11 @@ class HomeController < ApplicationController
   include ShopifyApp::EmbeddedApp
 
   def index
-    return render(:invalid_shop) if shopify_domain.nil? || !valid_shopify_domain?
-
-    return redirect_to(shop_login) if shop.nil?
-
-    @shop_origin = shopify_domain
+#    return render(:invalid_shop) if shopify_domain.nil? || !valid_shopify_domain?
+#
+#    return redirect_to(shop_login) if shop.nil?
+#
+#    @shop_origin = shopify_domain
   end
 
   private
