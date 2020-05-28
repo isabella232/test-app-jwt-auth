@@ -56,4 +56,8 @@ end
 
 # Windows does not include zoneinfo files, so bundle the tzinfo-data gem
 gem 'tzinfo-data', platforms: [:mingw, :mswin, :x64_mingw, :jruby]
-gem 'shopify_app', git: 'https://github.com/shopify/shopify_app', branch: 'add-session-token-concern'
+gem 'shopify_app', git: 'https://github.com/shopify/shopify_app'
+
+gem 'graphql'
+
+gem 'graphiql-rails', group: :development

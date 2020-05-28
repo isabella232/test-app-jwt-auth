@@ -12,10 +12,10 @@ ShopifyApp.configure do |config|
 
   # JWT specific
   config.allow_jwt_authentication = true
-  config.myshopify_domain = 'myshopify.io'
+  config.myshopify_domain = 'myshopify.com'
 
 end
 
- ShopifyAPI::Session.myshopify_domain = 'myshopify.io'
+ ShopifyAPI::Session.myshopify_domain = 'myshopify.com'
 # ShopifyApp::Utils.fetch_known_api_versions                        # Uncomment to fetch known api versions from shopify servers on boot
 # ShopifyAPI::ApiVersion.version_lookup_mode = :raise_on_unknown    # Uncomment to raise an error if attempting to use an api version that was not previously known

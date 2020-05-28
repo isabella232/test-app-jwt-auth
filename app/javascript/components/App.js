@@ -1,65 +1,68 @@
-import React from "react"
-import {HttpLink} from 'apollo-link-http';
-import ApolloClient from 'apollo-client';
-import {createApp} from '@shopify/app-bridge';
-import { Redirect } from '@shopify/app-bridge/actions';
-import {SessionToken} from '@shopify/app-bridge/actions';
-import {InMemoryCache, defaultDataIdFromObject} from 'apollo-cache-inmemory';
+import React from "react";
+import { AppProvider, Page, EmptyState } from "@shopify/polaris";
+import { HttpLink } from "apollo-link-http";
+import ApolloClient from "apollo-client";
+import { ApolloProvider } from "@apollo/react-hooks";
+import { createApp } from "@shopify/app-bridge";
+import authenticatedFetch from "@shopify/app-bridge-utils";
+import { InMemoryCache } from "apollo-cache-inmemory";
+import { gql } from "apollo-boost";
+import { Query } from "react-apollo";
 
-import {getRootElement, getEmbeddedAppProps} from '../utilities/';
+import { getEmbeddedAppProps } from "../utilities/";
 
-const root = getRootElement();
+export default function App() {
+  const embeddedAppProps = getEmbeddedAppProps();
+  const apiKey = getEmbeddedAppProps && embeddedAppProps.apiKey;
+  const shopOrigin = getEmbeddedAppProps && embeddedAppProps.shopOrigin;
 
-const embeddedAppProps = getEmbeddedAppProps();
-const apiKey = getEmbeddedAppProps && embeddedAppProps.apiKey;
-const shopOrigin = getEmbeddedAppProps && embeddedAppProps.shopOrigin;
-
-const app = createApp({
-  apiKey: apiKey,
-  shopOrigin: shopOrigin
-});
-
-const cache = new InMemoryCache({
-  dataIdFromObject: (object) => {
-    switch (object.__typename) {
-      case 'ButtonSettings':
-        return 'ButtonSettings';
-      default:
-        return defaultDataIdFromObject(object);
-    }
-  },
-});
-
-const customFetch = async (uri, options) => {
-  app.dispatch(SessionToken.request());
-  const optionsWithToken = await new Promise((resolve) => {
-    app.subscribe(SessionToken.ActionType.RESPOND, (payload) => {
-      resolve({
-        ...options,
-        headers: {
-          Authorization: `Bearer ${payload.sessionToken}`,
-          'Access-Control-Allow-Origin': '*',
-          'Content-Type': 'application/json',
-        },
-      });
-    });
+  const app = createApp({
+    apiKey: apiKey,
+    shopOrigin: shopOrigin,
+    forceRedirect: true,
   });
-  return fetch(uri, optionsWithToken);
-};
 
-const link = new HttpLink({
-  credentials: 'same-origin',
-  fetch: customFetch,
-});
+  const client = new ApolloClient({
+    link: new HttpLink({
+      credentials: "same-origin",
+      fetch: authenticatedFetch(app),
+      uri: "/graphql",
+    }),
+    cache: new InMemoryCache(),
+  });
 
-const client = new ApolloClient({
-  link,
-  cache,
-});
+  const TEST_QUERY = gql`
+    query {
+      testField
+    }
+  `;
 
-customFetch('/graphql');
-
-export default function App () {
-  return(<h1>App</h1>)
+  return (
+    <AppProvider i18n={{}}>
+      <ApolloProvider client={client}>
+        <Page>
+          <EmptyState
+            heading="Manage your inventory transfers"
+            action={{
+              content: "Add transfer",
+            }}
+            secondaryAction={{
+              content: "Learn more",
+              url: "https://help.shopify.com",
+            }}
+            image="https://cdn.shopify.com/s/files/1/0757/9955/files/empty-state.svg"
+          >
+            <Query query={TEST_QUERY}>
+              {({ loading, error, data }) => {
+                if (loading) return <div>Fetching..</div>;
+                if (error) return <div>Error!</div>;
+                return <div>{data.testField}</div>;
+              }}
+            </Query>
+            <p>Track and receive your incoming inventory from suppliers.</p>
+          </EmptyState>
+        </Page>
+      </ApolloProvider>
+    </AppProvider>
+  );
 }
-

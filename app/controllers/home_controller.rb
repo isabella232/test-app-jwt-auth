@@ -2,7 +2,7 @@
 
 class HomeController < ApplicationController
   include ShopifyApp::EmbeddedApp
-  include ShopifyApp::DomainProtection
+  include ShopifyApp::RequireKnownShop
 
   def index
     @shop_origin = current_shopify_domain

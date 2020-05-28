@@ -1,7 +1,6 @@
 GIT
   remote: https://github.com/shopify/shopify_app
-  revision: 5e7f336c38d183462e4c35a957c07aed84d8818d
-  branch: add-session-token-concern
+  revision: 6e3f11816892d25cc5ca65ff0811e139ccf5eba8
   specs:
     shopify_app (13.2.0)
       browser_sniffer (~> 1.2.2)
@@ -112,7 +111,10 @@ GEM
     ffi (1.12.2)
     globalid (0.4.2)
       activesupport (>= 4.2.0)
-    graphql (1.10.9)
+    graphiql-rails (1.7.0)
+      railties
+      sprockets-rails
+    graphql (1.10.10)
     graphql-client (0.16.0)
       activesupport (>= 3.0)
       graphql (~> 1.8)
@@ -276,6 +278,8 @@ DEPENDENCIES
   byebug
   capybara (>= 2.15)
   dotenv-rails
+  graphiql-rails
+  graphql
   jbuilder (~> 2.7)
   listen (~> 3.2)
   puma (~> 4.1)
